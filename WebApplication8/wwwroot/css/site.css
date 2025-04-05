@@ -1,0 +1,632 @@
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    min-height: 100vh;
+    background: linear-gradient(270deg, #fbefff, #e6d6ff, #e0caff, #f3e6ff);
+    background-size: 400% 400%;
+    animation: gradientFlow 25s ease infinite;
+    background-attachment: fixed;
+    color: #1a1a1a;
+    opacity: 0;
+    transition: opacity 0.6s ease;
+}
+
+    body.loaded {
+        opacity: 1;
+    }
+
+    body.fade-out {
+        opacity: 0;
+    }
+
+@keyframes gradientFlow {
+    0% {
+        background-position: 0% 50%;
+    }
+
+    50% {
+        background-position: 100% 50%;
+    }
+
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+header {
+    background-color: transparent;
+    text-align: center;
+    padding: 15px 0;
+}
+
+.navbar-brand {
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: #444 !important;
+    text-decoration: none;
+}
+
+footer {
+    font-size: 0.85rem;
+    color: #aaa;
+    text-align: center;
+    padding: 20px 0;
+    background: transparent;
+}
+
+.container {
+    max-width: 720px;
+}
+
+
+.section {
+    padding: 30px 20px;
+    text-align: center;
+}
+
+h1 {
+    font-size: 1.8rem;
+    margin-bottom: 10px;
+}
+
+h2 {
+    font-size: 1.2rem;
+    margin-bottom: 30px;
+    font-weight: normal;
+    color: #555;
+}
+
+
+.album-list {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+}
+
+.album {
+    width: 100%;
+    max-width: 440px;
+    background-color: white;
+    border: 1px solid #444;
+    border-radius: 12px;
+    padding: 25px;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    box-sizing: border-box;
+}
+
+    .album:hover {
+        background-color: #f2e5ff;
+        transform: scale(1.01);
+    }
+
+.album-title {
+    font-weight: bold;
+    font-size: 1.1rem;
+    margin-bottom: 5px;
+}
+
+.album-info {
+    font-size: 0.9rem;
+    color: #666;
+    margin-bottom: 10px;
+}
+
+.tracklist {
+    text-align: left;
+    font-size: 0.95rem;
+    padding-left: 0;
+    list-style-position: inside;
+}
+
+    .tracklist li {
+        margin-bottom: 3px;
+    }
+
+.more-link {
+    margin-top: 15px;
+    font-size: 0.9rem;
+    color: #444;
+    font-weight: 500;
+    cursor: pointer;
+    transition: color 0.2s ease;
+}
+
+    .more-link:hover {
+        color: #9e71c7;
+    }
+
+.album-details {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.5s ease, opacity 0.5s ease;
+    opacity: 0;
+    margin-top: 0;
+}
+
+    .album-details.expanded {
+        max-height: 1000px;
+        opacity: 1;
+        margin-top: 15px;
+    }
+
+.album-cover {
+    width: 100%;
+    max-width: 300px;
+    height: 280px;
+    object-fit: cover;
+    border-radius: 10px;
+    margin-bottom: 15px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+
+.audio-player {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    margin-top: 10px;
+    padding-bottom: 10px;
+}
+
+.play-btn {
+    background-color: white;
+    border: 1px solid #444;
+    border-radius: 6px;
+    padding: 6px 12px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background-color 0.3s ease;
+}
+
+    .play-btn:hover {
+        background-color: #f2e5ff;
+    }
+
+.time-display {
+    font-size: 0.85rem;
+    color: #555;
+}
+
+@keyframes pulseGlow {
+    0% {
+        filter: drop-shadow(0 0 12px #e0bfff);
+    }
+
+    50% {
+        filter: drop-shadow(0 0 28px #ae6cff);
+    }
+
+    100% {
+        filter: drop-shadow(0 0 12px #e0bfff);
+    }
+}
+
+.waveform {
+    width: 100%;
+    max-width: 300px;
+    height: 80px;
+    margin-top: 10px;
+    transition: filter 0.6s ease;
+    filter: drop-shadow(0 0 0px transparent);
+}
+
+    .waveform.playing {
+        animation: pulseGlow 1.2s ease-in-out infinite;
+    }
+
+.volume-control {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 4px;
+}
+
+.volume-icon {
+    font-size: 1.1rem;
+    color: #9e71c7;
+    user-select: none;
+}
+
+.volume-slider {
+    width: 180px;
+    height: 8px;
+    margin-top: 4px;
+    appearance: none;
+    background: linear-gradient(to right, #cfa9ff, #e6d6ff);
+    border-radius: 50px;
+    outline: none;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+    .volume-slider::-webkit-slider-thumb {
+        appearance: none;
+        width: 14px;
+        height: 14px;
+        background-color: #a27cc0;
+        border: 2px solid white;
+        border-radius: 50%;
+        cursor: pointer;
+        box-shadow: 0 0 4px rgba(0, 0, 0, 0.15);
+        transition: transform 0.2s ease;
+    }
+
+        .volume-slider::-webkit-slider-thumb:hover {
+            transform: scale(1.1);
+        }
+
+    .volume-slider::-moz-range-thumb {
+        width: 14px;
+        height: 14px;
+        background-color: #a27cc0;
+        border: 2px solid white;
+        border-radius: 50%;
+        cursor: pointer;
+        box-shadow: 0 0 4px rgba(0, 0, 0, 0.15);
+    }
+
+
+.visualizer-bar-bg {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 100px;
+    display: flex;
+    justify-content: space-evenly;
+    align-items: flex-end;
+    z-index: -1;
+    pointer-events: none;
+    opacity: 0.4;
+}
+
+    .visualizer-bar-bg .bar {
+        width: 4px;
+        height: 20px;
+        margin: 0 1px;
+        background: #cfa9ff;
+        border-radius: 4px;
+        transform-origin: bottom center;
+        animation: bounceBar infinite;
+        animation-duration: calc(0.8s + (0.5s * var(--speed)));
+        animation-delay: calc(0.2s * var(--delay));
+    }
+
+
+        .visualizer-bar-bg .bar:nth-child(1) {
+            --i: 1;
+        }
+
+        .visualizer-bar-bg .bar:nth-child(2) {
+            --i: 2;
+        }
+
+        .visualizer-bar-bg .bar:nth-child(3) {
+            --i: 3;
+        }
+
+        .visualizer-bar-bg .bar:nth-child(4) {
+            --i: 4;
+        }
+
+        .visualizer-bar-bg .bar:nth-child(5) {
+            --i: 5;
+        }
+
+        .visualizer-bar-bg .bar:nth-child(6) {
+            --i: 6;
+        }
+
+        .visualizer-bar-bg .bar:nth-child(7) {
+            --i: 7;
+        }
+
+        .visualizer-bar-bg .bar:nth-child(8) {
+            --i: 8;
+        }
+
+        .visualizer-bar-bg .bar:nth-child(9) {
+            --i: 9;
+        }
+
+        .visualizer-bar-bg .bar:nth-child(10) {
+            --i: 10;
+        }
+
+        .visualizer-bar-bg .bar:nth-child(11) {
+            --i: 11;
+        }
+
+        .visualizer-bar-bg .bar:nth-child(12) {
+            --i: 12;
+        }
+
+        .visualizer-bar-bg .bar:nth-child(13) {
+            --i: 13;
+        }
+
+        .visualizer-bar-bg .bar:nth-child(14) {
+            --i: 14;
+        }
+
+        .visualizer-bar-bg .bar:nth-child(15) {
+            --i: 15;
+        }
+
+@keyframes bounceBar {
+    0%, 100% { height: 20px; }
+    50%      { height: 80px; }
+}
+
+@keyframes colorPulse {
+    0%   { background-color: #cfa9ff; }
+    50%  { background-color: #e0bfff; }
+    100% { background-color: #cfa9ff; }
+}
+
+@keyframes glowOnBeat {
+    0%, 100% { filter: drop-shadow(0 0 0 transparent); }
+    50%     { filter: drop-shadow(0 0 12px #d3a8ff); }
+}
+
+.visualizer-bar-bg .bar {
+    width: 4px;
+    height: 20px;
+    margin: 0 1px;
+    border-radius: 4px;
+    transform-origin: bottom center;
+    animation-name: bounceBar, colorPulse, glowOnBeat;
+    animation-duration: 
+        calc(0.8s + (0.5s * var(--speed))), 
+        2s, 
+        1.2s;
+    animation-iteration-count: infinite;
+    animation-delay: 
+        calc(0.2s * var(--delay)), 
+        0s, 
+        0s;
+    animation-timing-function: ease-in-out;
+}
+
+@keyframes bounceBar {
+    0%, 100% {
+        height: 20px;
+    }
+
+    50% {
+        height: 80px;
+    }
+}
+
+@keyframes colorPulse {
+    0% {
+        background-color: #cfa9ff;
+    }
+
+    50% {
+        background-color: #e0bfff;
+    }
+
+    100% {
+        background-color: #cfa9ff;
+    }
+}
+
+@keyframes glowOnBeat {
+    0%, 100% {
+        filter: drop-shadow(0 0 0 transparent);
+    }
+
+    50% {
+        filter: drop-shadow(0 0 12px #d3a8ff);
+    }
+}
+
+.visualizer-bar-bg .bar {
+    width: 4px;
+    height: 20px;
+    margin: 0 1px;
+    border-radius: 4px;
+    transform-origin: bottom center;
+    animation-name: bounceBar, colorPulse, glowOnBeat;
+    animation-duration: calc(0.8s + (0.5s * var(--speed))), 2s, 1.2s;
+    animation-iteration-count: infinite;
+    animation-delay: calc(0.2s * var(--delay)), 0s, 0s;
+    animation-timing-function: ease-in-out;
+}
+
+
+    .visualizer-bar-bg .bar:hover {
+        animation: hoverWiggle 0.3s ease infinite alternate !important;
+        transform-origin: center bottom;
+    }
+
+@keyframes hoverWiggle {
+    0% {
+        transform: scaleY(1) rotate(0deg);
+    }
+
+    50% {
+        transform: scaleY(1.2) rotate(2deg);
+    }
+
+    100% {
+        transform: scaleY(1.4) rotate(-2deg);
+    }
+}
+
+
+.floating-vinyl {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    width: 64px;
+    height: 64px;
+    background: radial-gradient(circle, #d8b7ff 0%, #b38aff 80%);
+    border-radius: 50%;
+    box-shadow: 0 0 12px #cfa9ff;
+    cursor: pointer;
+    z-index: 99;
+    transition: transform 0.3s ease;
+}
+
+.vinyl-icon {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background-image: url('/media/vinyl-icon.png'); 
+    background-size: cover;
+    background-position: center;
+}
+
+.vinyl-player {
+    position: absolute;
+    top: 80px;
+    left: 0;
+    width: 280px;
+    background: white;
+    border: 1px solid #ccc;
+    border-radius: 12px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.15);
+    padding: 16px;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    animation: fadeIn 0.3s ease;
+}
+
+    .vinyl-player.active {
+        display: flex;
+    }
+
+.vinyl-art {
+    width: 100px;
+    height: 100px;
+    background: url('https://i.scdn.co/image/ab67616d0000b273d67816ddee3a4d403459c7c4') no-repeat center;
+    background-size: cover;
+    border-radius: 50%;
+    animation: spinVinyl 5s linear infinite;
+    box-shadow: 0 0 10px #e0bfff;
+}
+
+.vinyl-info {
+    text-align: center;
+}
+
+.vinyl-title {
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-bottom: 6px;
+}
+
+.vinyl-play-btn {
+    background: white;
+    border: 1px solid #444;
+    border-radius: 6px;
+    padding: 6px 12px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background-color 0.3s ease;
+}
+
+    .vinyl-play-btn:hover {
+        background-color: #f2e5ff;
+    }
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes spinVinyl {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+#cursor-trail {
+    position: fixed;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+    z-index: 9999;
+}
+
+.cursor-dot {
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: radial-gradient(circle, #e6d6ff, #cfa9ff);
+    box-shadow: 0 0 6px #e0bfff;
+    opacity: 0.8;
+    animation: fadeOut 0.8s ease-out forwards;
+}
+
+@keyframes fadeOut {
+    to {
+        transform: scale(0.5);
+        opacity: 0;
+    }
+}
+
+
+.rhythm-button {
+    background: linear-gradient(135deg, #e6d6ff, #cfa9ff);
+    color: #1a1a1a;
+    font-weight: bold;
+    font-size: 1.1rem;
+    padding: 12px 28px;
+    border: none;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(200, 160, 255, 0.4);
+    transition: transform 0.2s ease, background 0.3s ease;
+    text-decoration: none;
+    display: inline-block;
+}
+
+    .rhythm-button:hover {
+        transform: scale(1.05);
+        background: linear-gradient(135deg, #d8b7ff, #ae6cff);
+    }
+
+
+#feedback.Perfect {
+    color: #5df05d;
+}
+
+#feedback.Great {
+    color: #4ea0ff;
+}
+
+#feedback.Miss {
+    color: #ff4d4d;
+}
+
+
+#songSelect {
+    padding: 6px 12px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    font-size: 1rem;
+    background: #f8f0ff;
+    color: #333;
+    box-shadow: 0 0 4px rgba(0,0,0,0.1);
+}
+
+

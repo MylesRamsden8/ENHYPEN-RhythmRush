@@ -1,0 +1,226 @@
+﻿@{
+    ViewData["Title"] = "Rhythm Rush";
+    Layout = "_Layout";
+}
+<div class="rhythm-wrapper">
+    <div class="track-sidebar">
+        <h2>Select a Track</h2>
+        <div class="track-option" data-src="/media/emotion_engine.mp3">
+            <img src="/media/emotion_engine_cover.jpg" alt="Emotion Engine" />
+            <span>emotion_engine</span>
+        </div>
+        <div class="track-option" data-src="/media/3minute.mp3">
+            <img src="/media/3minute_cover.jpg" alt="3minute" />
+            <span>3minute</span>
+        </div>
+    </div>
+
+    <div class="rhythm-game">
+        <h1>🎵 Rhythm Rush</h1>
+        <p>Press the <strong>Spacebar</strong> when the note hits the purple line!</p>
+
+        <div class="game-container">
+            <div class="hit-line"></div>
+            <div id="note-area"></div>
+            <div id="feedback"></div>
+        </div>
+
+        <div class="score">Score: <span id="scoreDisplay">0</span></div>
+        <div class="lives">Lives: <span id="livesDisplay">5</span></div>
+        <div id="gameOver">Game Over</div>
+
+        <audio id="bgMusic" src="/media/emotion_engine.mp3" preload="auto"></audio>
+        <audio id="seHit" src="/media/hit.mp3" preload="auto"></audio>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        const noteArea = document.getElementById("note-area");
+        const scoreDisplay = document.getElementById("scoreDisplay");
+        const feedback = document.getElementById("feedback");
+        const bgMusic = document.getElementById("bgMusic");
+        const seHit = document.getElementById("seHit");
+        const trackOptions = document.querySelectorAll(".track-option");
+        const livesDisplay = document.getElementById("livesDisplay");
+        const gameOverText = document.getElementById("gameOver");
+
+        let score = 0;
+        let lives = 5;
+        let gameStarted = false;
+        let noteSpawnInterval;
+        let gameOver = false;
+
+        const lanes = [
+            "20%",
+            "calc(50% - 25px)",
+            "80%"
+        ];
+
+        function spawnNote() {
+            if (gameOver) return;
+
+            const note = document.createElement("div");
+            note.classList.add("note");
+
+            const lane = lanes[Math.floor(Math.random() * lanes.length)];
+            note.style.left = lane;
+            note.style.top = "-60px";
+            noteArea.appendChild(note);
+
+            let position = -60;
+            const speed = 3;
+
+            const interval = setInterval(() => {
+                if (!document.body.contains(note)) {
+                    clearInterval(interval);
+                    return;
+                }
+
+                position += speed;
+                note.style.top = position + "px";
+
+                if (position > 510) {
+                    note.remove();
+                    clearInterval(interval);
+                    loseLife();
+                }
+            }, 16);
+        }
+
+        function spawnLoop() {
+            if (gameOver) return;
+            spawnNote();
+            const delay = Math.random() * 1000 + 400;
+            noteSpawnInterval = setTimeout(spawnLoop, delay);
+        }
+
+        function startGame() {
+            if (!gameStarted) {
+                gameStarted = true;
+                gameOver = false;
+                score = 0;
+                lives = 5;
+                scoreDisplay.textContent = score;
+                livesDisplay.textContent = lives;
+                gameOverText.style.display = "none";
+                bgMusic.play();
+                spawnLoop();
+            }
+        }
+
+        function resetGame() {
+            gameStarted = false;
+            gameOver = false;
+            clearTimeout(noteSpawnInterval);
+            bgMusic.pause();
+            bgMusic.currentTime = 0;
+            noteArea.innerHTML = "";
+            score = 0;
+            lives = 5;
+            scoreDisplay.textContent = 0;
+            livesDisplay.textContent = 5;
+            gameOverText.style.display = "none";
+        }
+
+        function loseLife() {
+            if (gameOver) return;
+            lives--;
+            livesDisplay.textContent = lives;
+            showFeedback("Miss");
+            if (lives <= 0) {
+                endGame();
+            }
+        }
+
+        function endGame() {
+            gameOver = true;
+            gameStarted = false;
+            clearTimeout(noteSpawnInterval);
+            gameOverText.style.display = "block";
+            bgMusic.pause();
+        }
+
+        function showFeedback(type, note = null) {
+            feedback.textContent = type;
+            feedback.className = "show " + type;
+            setTimeout(() => {
+                feedback.className = "";
+            }, 500);
+
+            if ((type === "Perfect" || type === "Great") && note) {
+                const noteCenterX = note.offsetLeft + note.offsetWidth / 2;
+
+
+                const glow = document.createElement("div");
+                glow.classList.add("lane-glow");
+                glow.style.left = `${noteCenterX}px`;
+                noteArea.appendChild(glow);
+                setTimeout(() => glow.remove(), 500);
+
+
+                if (type === "Perfect") {
+                    const star = document.createElement("div");
+                    star.classList.add("star-effect");
+                    star.style.left = `${noteCenterX}px`;
+                    star.style.top = "400px"; 
+                    noteArea.appendChild(star);
+                    setTimeout(() => star.remove(), 800);
+                }
+            }
+        }
+
+
+        window.addEventListener("keydown", (e) => {
+            if (e.code === "Space" && !gameOver) {
+                startGame();
+
+                const hitLineY = 400;
+                const notes = document.querySelectorAll(".note");
+                let hit = false;
+
+                for (let note of notes) {
+                    const top = parseFloat(note.style.top || "0");
+                    const distance = Math.abs(top - hitLineY);
+
+                    if (distance <= 25) {
+                        score += 100;
+                        seHit.currentTime = 0;
+                        seHit.play();
+                        showFeedback("Perfect", note);
+                        note.remove();
+                        hit = true;
+                        break;
+                    } else if (distance <= 45) {
+                        score += 50;
+                        seHit.currentTime = 0;
+                        seHit.play();
+                        showFeedback("Great", note);
+                        note.remove();
+                        hit = true;
+                        break;
+                    }
+                }
+
+                if (!hit) {
+                    loseLife();
+                }
+
+                scoreDisplay.textContent = score;
+            }
+        });
+
+        trackOptions.forEach(option => {
+            option.addEventListener("click", () => {
+                trackOptions.forEach(opt => opt.classList.remove("active"));
+                option.classList.add("active");
+                resetGame();
+                bgMusic.src = option.dataset.src;
+            });
+        });
+
+        window.addEventListener("click", () => {
+            bgMusic.play().catch(() => { });
+        }, { once: true });
+    </script>
+}

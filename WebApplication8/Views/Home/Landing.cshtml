@@ -1,0 +1,96 @@
+﻿@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Welcome - ENHYPEN</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #fbefff;
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            transition: opacity 0.8s ease;
+        }
+
+        .fade-out {
+            opacity: 0;
+        }
+
+        .container {
+            text-align: center;
+            padding: 0 20px;
+        }
+
+        .title {
+            font-size: 1rem;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .main-title {
+            font-size: 1.8rem;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        .big-circle-btn {
+            width: 250px;
+            height: 250px;
+            border-radius: 50%;
+            background-color: white;
+            border: 1px solid #444;
+            margin: 20px auto;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+
+            .big-circle-btn:hover {
+                background-color: #ece0ff;
+                transform: scale(1.03);
+            }
+
+        .subtitle {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-top: 30px;
+        }
+
+        .info {
+            margin-top: 8px;
+            font-size: 0.95rem;
+            color: #555;
+        }
+    </style>
+</head>
+
+
+<body>
+    <div class="container">
+        <div class="title">one, two.. connect</div>
+        <div class="main-title">Hello. This is ENHYPEN!</div>
+
+        <div class="big-circle-btn" onclick="enterSite()"></div>
+
+        <div class="subtitle">ABOUT</div>
+        <div class="info">informations about group.</div>
+    </div>
+
+    <script>
+        function enterSite() {
+            document.body.classList.add('fade-out');
+            setTimeout(() => {
+                window.location.href = '/Home/Index';
+            }, 800);
+        }
+    </script>
+</body>
+</html>

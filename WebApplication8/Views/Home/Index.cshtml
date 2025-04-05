@@ -1,0 +1,97 @@
+﻿@{
+    ViewData["Title"] = "Index";
+    Layout = "_Layout";
+}
+
+<style>
+    body {
+        margin: 0;
+        padding: 0;
+        font-family: Arial, sans-serif;
+        height: 100vh;
+        background: linear-gradient(270deg, #fbefff, #e6d6ff, #e0caff, #f3e6ff);
+        background-size: 400% 400%;
+        animation: gradientFlow 25s ease infinite;
+        background-attachment: fixed;
+        color: #1a1a1a;
+    }
+
+    @@keyframes gradientFlow {
+        0% {
+            background-position: 0% 50%;
+        }
+
+        50% {
+            background-position: 100% 50%;
+        }
+
+        100% {
+            background-position: 0% 50%;
+        }
+    }
+
+    .circle-img {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        background-color: white;
+        margin: 20px auto;
+        border: 1px solid #aaa;
+    }
+
+    .section {
+        padding: 30px 20px;
+        text-align: center;
+    }
+
+    .circle-btn {
+        width: 60px;
+        height: 60px;
+        background-color: white;
+        border: 1px solid #444;
+        border-radius: 50%;
+        margin: 10px;
+        cursor: pointer;
+        transition: background-color 0.3s ease, transform 0.2s ease;
+    }
+
+        .circle-btn:hover {
+            background-color: #ece0ff;
+            transform: scale(1.1);
+        }
+
+    .button-label {
+        display: block;
+        margin-top: 5px;
+        font-size: 14px;
+        color: black;
+        text-decoration: none;
+        text-transform: capitalize;
+    }
+
+    a {
+        text-decoration: none;
+    }
+</style>
+
+<div class="section">
+    <div class="circle-img"></div>
+    <h1>Hello. This is ENHYPEN!</h1>
+    <h2>ABOUT</h2>
+    <p>Explore music and rhythm — all in one place.</p>
+
+    <div style="display: flex; justify-content: center; align-items: center; gap: 40px; margin-top: 40px;">
+        <div>
+            <a asp-controller="Discography" asp-action="Index">
+                <button class="circle-btn"></button>
+                <span class="button-label">discography</span>
+            </a>
+        </div>
+        <div>
+            <a asp-controller="RhythmRush" asp-action="Index">
+                <button class="circle-btn"></button>
+                <span class="button-label">rhythm rush</span>
+            </a>
+        </div>
+    </div>
+</div>

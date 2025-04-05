@@ -1,0 +1,164 @@
+﻿@{
+    ViewData["Title"] = "Discography";
+    Layout = "_Layout";
+}
+
+<div class="section">
+    <h1>Discography</h1>
+    <h2>Explore the music catalog</h2>
+
+    <div class="album-list">
+        <div class="album">
+            <div class="album-title">vKiSS</div>
+            <div class="album-info">dazegxd – 2022</div>
+            <div class="more-link" onclick="toggleDetails(this)">Click to view more</div>
+
+            <div class="album-details">
+                <img src="https://i.scdn.co/image/ab67616d0000b273d67816ddee3a4d403459c7c4" alt="Album Cover" class="album-cover" />
+                <ul class="tracklist">
+                    <li>1. fragile</li>
+                    <li>2. ur all i want</li>
+                    <li>3. emotion engine</li>
+                    <li>4. idk what love is</li>
+                    <li>5. wasting ur time</li>
+                    <li>6. outta my mind</li>
+                    <li>7. switch hearts</li>
+                    <li>8. can't let u go</li>
+                    <li>9. crazy4u!</li>
+                    <li>10. i want u (2stay)</li>
+                </ul>
+
+                <div class="audio-player">
+                    <button class="play-btn" onclick="toggleWave(this)">▶ Play Album Preview</button>
+                    <div class="waveform" data-src="/media/0404.MP3"></div>
+                    <div class="time-display">0:00 / 0:00</div>
+                    <div class="volume-control">
+                        <span class="volume-icon">🔊</span>
+                        <input type="range" class="volume-slider" min="0" max="1" step="0.01" value="1" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="section">
+    <div class="album-list">
+        <div class="album">
+            <div class="album-title">RENT'S DUE'</div>
+            <div class="album-info">Nemzzz – 2025</div>
+            <div class="more-link" onclick="toggleDetails(this)">Click to view more</div>
+
+            <div class="album-details">
+                <img src="https://i.scdn.co/image/ab67616d0000b27359e7b8bb8bf795c66d7d2692" alt="Album Cover" class="album-cover" />
+                <ul class="tracklist">
+                    <li>1. Cold</li>
+                    <li>2. Motion</li>
+                    <li>3. Turks & Caicos</li>
+                    <li>4. DTM</li>
+                    <li>5. Dilemma</li>
+                    <li>6. Miami</li>
+                    <li>7. EGO</li>
+                    <li>8. Sorry</li>
+                    <li>9. Bad gal riri</li>
+                    <li>10. BMF</li>
+                </ul>
+
+                <div class="audio-player">
+                    <button class="play-btn" onclick="toggleWave(this)">▶ Play Album Preview</button>
+                    <div class="waveform" data-src="/media/0405.MP3"></div>
+                    <div class="time-display">0:00 / 0:00</div>
+                    <div class="volume-control">
+                        <span class="volume-icon">🔊</span>
+                        <input type="range" class="volume-slider" min="0" max="1" step="0.01" value="1" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts {
+    <script src="https://unpkg.com/wavesurfer.js"></script>
+    <script>
+        const waves = [];
+
+        function toggleDetails(link) {
+            const container = link.closest('.album');
+            const details = container.querySelector('.album-details');
+            details.classList.toggle('expanded');
+            link.textContent = details.classList.contains('expanded') ? "Click to hide" : "Click to view more";
+        }
+
+        function toggleWave(button) {
+            const player = button.closest('.audio-player');
+            const container = player.querySelector('.waveform');
+            const timeDisplay = player.querySelector('.time-display');
+            const volumeSlider = player.querySelector('.volume-slider');
+            let waveObj = waves.find(w => w.container === container);
+
+            if (!waveObj) {
+                const wave = WaveSurfer.create({
+                    container: container,
+                    waveColor: '#dbc6f9',
+                    progressColor: '#9e71c7',
+                    height: 80,
+                    responsive: true,
+                    barWidth: 3,
+                    barGap: 2,
+                    barRadius: 2,
+                    cursorColor: '#a27cc0',
+                    normalize: true
+                });
+
+                wave.load(container.dataset.src);
+                waves.push({ container: container, wave });
+
+                wave.on('ready', () => {
+                    wave.play();
+                    container.classList.add('playing');
+                    button.textContent = '⏸ Pause Preview';
+                });
+
+                wave.on('audioprocess', () => {
+                    const current = formatTime(wave.getCurrentTime());
+                    const duration = formatTime(wave.getDuration());
+                    timeDisplay.textContent = `${current} / ${duration}`;
+                });
+
+                wave.on('pause', () => {
+                    container.classList.remove('playing');
+                });
+
+                wave.on('finish', () => {
+                    container.classList.remove('playing');
+                    button.textContent = '▶ Play Album Preview';
+                    timeDisplay.textContent = `0:00 / ${formatTime(wave.getDuration())}`;
+                });
+
+                volumeSlider.addEventListener('input', () => {
+                    wave.setVolume(volumeSlider.value);
+                });
+            } else {
+                const wave = waveObj.wave;
+                if (wave.isPlaying()) {
+                    wave.pause();
+                    button.textContent = '▶ Play Album Preview';
+                    container.classList.remove('playing');
+                } else {
+                    wave.play();
+                    button.textContent = '⏸ Pause Preview';
+                    container.classList.add('playing');
+                }
+            }
+        }
+
+        function formatTime(seconds) {
+            if (isNaN(seconds)) return "0:00";
+            const mins = Math.floor(seconds / 60);
+            const secs = Math.floor(seconds % 60).toString().padStart(2, '0');
+            return `${mins}:${secs}`;
+        }
+    </script>
+}

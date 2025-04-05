@@ -1,0 +1,134 @@
+﻿@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - ENHYPEN</title>
+
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/rhythmrush.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/YourApp.styles.css" asp-append-version="true" />
+</head>
+<body>
+
+    <div class="visualizer-bar-bg" aria-hidden="true">
+        @for (int i = 1; i <= 150; i++)
+        {
+            var speed = new Random(i).Next(1, 4);
+            var delay = new Random(i * 2).Next(0, 10);
+            <div class="bar" style="--speed:@speed; --delay:@delay;"></div>
+        }
+    </div>
+
+
+    <div id="cursor-trail"></div>
+
+
+    <header>
+        <nav class="navbar d-flex justify-content-center align-items-center" style="height: 70px;">
+            <a class="navbar-brand text-center" asp-controller="Home" asp-action="Index" style="margin: 0 auto;">ENHYPEN</a>
+        </nav>
+    </header>
+
+    <div class="container">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+
+
+    <footer>
+        <div class="container text-center">
+            &copy; 2025 — ENHYPEN
+        </div>
+    </footer>
+
+    <div class="floating-vinyl" onclick="toggleVinylPlayer()">
+        <div class="vinyl-icon"></div>
+        <div class="vinyl-player" id="vinylPlayer">
+            <div class="vinyl-art"></div>
+            <div class="vinyl-info">
+                <div class="vinyl-title">vKiSS – dazegxd</div>
+                <button class="vinyl-play-btn" onclick="event.stopPropagation(); toggleVinylAudio(this)">▶ Play</button>
+                <audio id="vinylAudio" src="/media/0404.MP3"></audio>
+            </div>
+        </div>
+    </div>
+
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/wavesurfer.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+
+
+    <script>
+        window.addEventListener("DOMContentLoaded", () => {
+            document.body.classList.add("loaded");
+
+            document.querySelectorAll("a[href]:not([target]):not([href^='#'])").forEach(link => {
+                link.addEventListener("click", function (e) {
+                    const href = this.getAttribute("href");
+                    if (!href || href.startsWith("javascript:") || href.startsWith("mailto:") || href.startsWith("tel:")) return;
+
+                    e.preventDefault();
+                    document.body.classList.remove("loaded");
+                    document.body.classList.add("fade-out");
+
+                    setTimeout(() => {
+                        window.location.href = href;
+                    }, 500);
+                });
+            });
+        });
+    </script>
+
+
+    <script>
+        function toggleVinylPlayer() {
+            const player = document.getElementById("vinylPlayer");
+            player.classList.toggle("active");
+        }
+
+        function toggleVinylAudio(btn) {
+            const audio = document.getElementById("vinylAudio");
+
+            if (audio.paused) {
+                audio.play();
+                btn.textContent = "⏸ Pause";
+            } else {
+                audio.pause();
+                btn.textContent = "▶ Play";
+            }
+
+            audio.onended = () => {
+                btn.textContent = "▶ Play";
+            };
+        }
+    </script>
+
+
+    <script>
+        const trailContainer = document.getElementById("cursor-trail");
+
+        document.addEventListener("mousemove", (e) => {
+            const dot = document.createElement("div");
+            dot.classList.add("cursor-dot");
+            dot.style.left = `${e.clientX - 6}px`;
+            dot.style.top = `${e.clientY - 6}px`;
+            trailContainer.appendChild(dot);
+
+            setTimeout(() => {
+                dot.remove();
+            }, 800);
+        });
+    </script>
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
